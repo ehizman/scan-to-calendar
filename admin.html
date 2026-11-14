@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Scan to Calendar Admin</title>
+<meta name="theme-color" content="#2746D6">
+<meta name="color-scheme" content="light dark">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap wide">
+  <header class="top">
+    <div class="brand">
+      <img src="icons/icon.svg" alt="">
+      <h1>Create an event QR code</h1>
+    </div>
+    <a class="btn link" href="./">Open the scanner</a>
+  </header>
+
+  <p class="banner" id="host-warn" hidden></p>
+
+  <div class="admin-grid">
+    <section class="panel" aria-labelledby="h-details">
+      <h2 id="h-details">Event details</h2>
+      <form class="form" id="aform" autocomplete="off" novalidate>
+        <div class="field full"><label for="a-title">Title</label><input type="text" id="a-title" maxlength="120" required placeholder="Quarterly members meeting"></div>
+        <div class="field full"><label for="a-date">Date</label><input type="date" id="a-date" required></div>
+        <div class="field"><label for="a-start">Starts</label><input type="time" id="a-start" required value="18:00"></div>
+        <div class="field"><label for="a-end">Ends</label><input type="time" id="a-end" required value="20:00"></div>
+        <p class="hint field full" id="a-dur"></p>
+        <div class="field full"><label for="a-location">Location</label><input type="text" id="a-location" maxlength="160" placeholder="Main hall, 12 Example Road"></div>
+        <div class="field full"><label for="a-details">Details for members</label><textarea id="a-details" rows="3" maxlength="400" placeholder="Doors open 30 minutes early. Bring your membership card."></textarea><span class="counter" id="a-count"></span></div>
+        <div class="field full"><label for="a-tz">Time zone</label><input type="text" id="a-tz" list="tz-list" spellcheck="false" autocapitalize="off"><datalist id="tz-list"></datalist></div>
+      </form>
+      <p class="form-err" id="a-err" role="alert"></p>
+      <button class="btn primary big" type="button" id="btn-create">Create QR code</button>
+      <p class="hint">Reminders are worked out from the moment you create the code. Shorter descriptions make a simpler QR code that scans faster from the back of the room.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="h-preview" id="preview-panel">
+      <h2 id="h-preview">QR code</h2>
+      <p class="preview-empty" id="preview-empty">Fill in the event details and tap Create QR code. The code and the reminder schedule appear here.</p>
+      <div id="preview" hidden>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="preview-head"><h3 id="p-title"></h3><span id="p-when"></span><span id="p-where"></span></div>
+          <div class="qr-box" id="qr-box"></div>
+          <button class="btn primary big" type="button" id="btn-project">Project on screen</button>
+          <div class="row">
+            <button class="btn" type="button" id="btn-png">Download PNG</button>
+            <button class="btn" type="button" id="btn-jpg">Download JPEG</button>
+            <button class="btn" type="button" id="btn-copy">Copy link</button>
+            <a class="btn" id="btn-open" href="#" target="_blank" rel="noopener">Preview member view</a>
+          </div>
+          <label class="check"><input type="checkbox" id="x-caption" checked> Print the title, date and place under the code in downloads</label>
+          <input type="text" id="p-link" readonly aria-label="Event link">
+          <p class="hint" id="p-meta"></p>
+          <h2>Reminders</h2>
+          <p class="sched-cond" id="sched-cond"></p>
+          <ul class="sched" id="sched"></ul>
+          <p class="hint">Members who tap Apple Calendar (or download the .ics file) get these reminders. Google Calendar's add-event link can't carry reminders, so Google users get their usual Google Calendar reminders instead.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="history" aria-labelledby="h-saved">
+    <h2 id="h-saved">Your events</h2>
+    <div class="card">
+      <ul class="saved" id="saved"></ul>
+      <p class="empty" id="saved-empty">Events you create are saved here, on this computer only, so you can project them again later.</p>
+    </div>
+  </section>
+</div>
+
+<div class="projector" id="projector" hidden role="dialog" aria-modal="true" aria-labelledby="pj-title">
+  <div class="pq" id="pj-qr"></div>
+  <div class="pi">
+    <span class="p-kicker">Add to your calendar</span>
+    <h2 id="pj-title"></h2>
+    <span class="p-when" id="pj-when"></span>
+    <span class="p-where" id="pj-where"></span>
+    <span class="p-cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 18h4"/></svg>Open your phone camera and point it at the code.</span>
+  </div>
+  <button class="btn p-close" type="button" id="pj-close">Close (Esc)</button>
+</div>
+
+<script src="vendor/qrcode.js"></script>
+<script src="calendar.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

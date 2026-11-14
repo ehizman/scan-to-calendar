@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Editors and IDEs
+.idea/
+*.iml
+.vscode/
+*.swp
+*~
+
+# Node (only used to run the tests; the app has no build step)
+node_modules/
+npm-debug.log*
+
+# Deploy tool state (Netlify, Vercel, Cloudflare Wrangler)
+.netlify/
+.vercel/
+.wrangler/
+
+# Local secrets, in case a deploy token is ever kept here
+.env
+.env.*
+
+# Logs and scratch files
+*.log
+tmp/
