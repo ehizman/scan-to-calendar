@@ -315,9 +315,8 @@
     const ics = toIcs(ev, uid);
     const name = (ev.summary.replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-").slice(0, 40) || "event") + ".ics";
     if (isIOS) {
-      // iOS hands a text/calendar document straight to Calendar ("Add to Calendar").
-      location.href = "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
-      $("#act-msg").textContent = "Tap Add to Calendar in the sheet that opens.";
+      $("#act-msg").textContent = "Opening Calendar… Tap Add to Calendar in the sheet that appears. If nothing opens, open this page in Safari and try again.";
+      openIcsOnIOS(ics, name);
     } else {
       const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar;charset=utf-8" }));
       const a = document.createElement("a"); a.href = url; a.download = name; document.body.append(a); a.click(); a.remove();
@@ -327,6 +326,24 @@
     $("#add-apple").classList.add("done");
     if (current.source !== "example") remember(ev, "apple");
   });
+
+  /**
+   * iPhone/iPad: Safari silently ignores navigations to data: URLs, so open the file at a
+   * real address instead. sw.js answers ./ics/<name>?d=… with the file as text/calendar,
+   * and Safari hands that to Calendar. Without a service worker (some in-app browsers),
+   * fall back to a blob: URL.
+   */
+  async function openIcsOnIOS(ics, name) {
+    let reg = null;
+    if ("serviceWorker" in navigator && window.isSecureContext) {
+      reg = await Promise.race([navigator.serviceWorker.ready, new Promise(r => setTimeout(() => r(null), 3000))]).catch(() => null);
+    }
+    if (reg && reg.active) {
+      location.href = new URL(`ics/${encodeURIComponent(name)}?d=${b64urlEncode(ics)}`, location.href).href;
+    } else {
+      location.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+    }
+  }
 
   function renderHistory() {
     const hist = store.get("history", []), ul = $("#hist");
