@@ -70,6 +70,8 @@ TZ=Africa/Lagos node --test test/*.test.js
 
 The tests expect the `Africa/Lagos` time zone, so always run them with `TZ` set as shown. They cover parsing, invite links, every reminder rule and boundary, `.ics` output, and a full QR round trip (encode an image, then decode it).
 
+GitHub Actions runs the same tests on Node 20 and 22 for every pull request and every push to `main` (`.github/workflows/test.yml`). A pull request needs them to pass. If it's your first pull request, a maintainer has to approve the run before it starts.
+
 Before opening a pull request, also check by hand:
 
 - [ ] Admin page: create an event, check the reminder schedule, project it, and download the PNG and JPEG.

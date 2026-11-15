@@ -1,0 +1,35 @@
+# Runs the unit tests for calendar.js on every push to main and every pull request.
+# The app is static, so there is nothing to install or build: Node runs the tests directly.
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Run tests
+        # The tests expect the Africa/Lagos time zone (see CONTRIBUTING.md).
+        env:
+          TZ: Africa/Lagos
+        run: node --test test/*.test.js
